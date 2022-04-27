@@ -1,0 +1,19 @@
+[package]
+name = "bevy_collaspe"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bevy = "0.7.0" #{ git = "https://github.com/bevyengine/bevy", branch = "main" }
+bevy_editor_pls = { git = "https://github.com/jakobhellermann/bevy_editor_pls", branch = "main" }
+rand = "0.8.5"
+
+# Enable only a small amount of optimization in debug mode
+[profile.dev]
+opt-level = 1
+
+# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
+[profile.dev.package."*"]
+opt-level = 3

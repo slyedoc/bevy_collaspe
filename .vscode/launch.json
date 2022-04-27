@@ -1,0 +1,82 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'bevy_collaspe'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=bevy_collaspe",
+                    "--package=bevy_collaspe"
+                ],
+                "filter": {
+                    "name": "bevy_collaspe",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'bevy_collaspe'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=bevy_collaspe",
+                    "--package=bevy_collaspe"
+                ],
+                "filter": {
+                    "name": "bevy_collaspe",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'breakout'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=breakout",
+                    "--package=bevy_collaspe"
+                ],
+                "filter": {
+                    "name": "breakout",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'breakout'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=breakout",
+                    "--package=bevy_collaspe"
+                ],
+                "filter": {
+                    "name": "breakout",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
