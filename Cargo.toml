@@ -3,13 +3,6 @@ name = "bevy_collaspe"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-bevy = "0.7.0" #{ git = "https://github.com/bevyengine/bevy", branch = "main" }
-bevy_editor_pls = { git = "https://github.com/jakobhellermann/bevy_editor_pls", branch = "main" }
-rand = "0.8.5"
-
 # Enable only a small amount of optimization in debug mode
 [profile.dev]
 opt-level = 1
@@ -17,3 +10,16 @@ opt-level = 1
 # Enable high optimizations for dependencies (incl. Bevy), but not for our code:
 [profile.dev.package."*"]
 opt-level = 3
+
+[dependencies]
+bevy = { version = "0.7.0", features = ["dynamic"] } #{ git = "https://github.com/bevyengine/bevy", branch = "main" }
+bevy_text_mesh = "0.2.0"
+bevy_editor_pls = { git = "https://github.com/jakobhellermann/bevy_editor_pls", branch = "main" }
+#bevy_mod_picking = "0.6"
+#bevy_transform_gizmo = { git = "https://github.com/ForesightMiningSoftwareCorporation/bevy_transform_gizmo", branch = "main" }
+bevy-inspector-egui = "0.10.0"
+bevy_asset_loader = "0.10.0"
+bevy_hanabi = { version = "0.2" }
+itertools = "0.10.2"
+rand = "0.8.5"
+

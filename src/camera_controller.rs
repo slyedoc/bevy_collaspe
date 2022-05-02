@@ -9,15 +9,9 @@ pub struct CameraControllerPlugin;
 
 impl Plugin for CameraControllerPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_system(init_camera_controller.label("init"))
-            .add_system(update_camera_controller.after("init"))
-            .add_startup_system(setup);
+        app.add_system(setup_camera_controller)
+            .add_system(update_camera_controller.after(setup_camera_controller));
     }
-}
-
-fn setup() {
-    info!("Press WASD to move camera, right mouse to rotate");
-
 }
 
 #[derive(Component)]
@@ -68,7 +62,7 @@ impl Default for CameraController {
     }
 }
 
-fn init_camera_controller(
+fn setup_camera_controller(
     mut query: Query<(&Transform, &mut CameraController), (Added<CameraController>, With<Camera>)>,
 ) {
     for (transform, mut controller) in query.iter_mut() {
@@ -180,16 +174,9 @@ fn update_camera_controller(
 fn yaw_pitch_roll(q: Quat) -> (f32, f32, f32) {
     let [x, y, z, w] = *q.as_ref();
 
-    fn atan2(a: f32, b: f32) -> f32 {
-        a.atan2(b)
-    }
-    fn asin(a: f32) -> f32 {
-        a.asin()
-    }
-
-    let yaw = atan2(2.0 * (y * z + w * x), w * w - x * x - y * y + z * z);
-    let pitch = asin(-2.0 * (x * z - w * y));
-    let roll = atan2(2.0 * (x * y + w * z), w * w + x * x - y * y - z * z);
+    let yaw = (2.0 * (y * z + w * x)).atan2( w * w - x * x - y * y + z * z);
+    let pitch = (-2.0 * (x * z - w * y)).asin();
+    let roll = (2.0 * (x * y + w * z)).atan2( w * w + x * x - y * y - z * z);
 
     (yaw, pitch, roll)
 }
