@@ -1,9 +1,24 @@
-use bevy::prelude::*;
+use bevy::{
+    pbr::SpecializedMaterial,
+    prelude::*,
+    render::{primitives::Frustum, view::VisibleEntities},
+};
 
-pub fn setup_light(mut commands: Commands) {
+pub struct EnviromentPlugin;
+impl Plugin for EnviromentPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_system(create_sun).add_system(create_ground);
+    }
+}
+
+#[derive(Component)]
+pub struct Sun;
+
+fn create_sun(mut commands: Commands, mut query: Query<Entity, Added<Sun>>) {
     const HALF_SIZE: f32 = 50.0;
-    commands
-        .spawn_bundle(DirectionalLightBundle {
+
+    for e in query.iter() {
+        commands.entity(e).insert_bundle(DirectionalLightBundle {
             directional_light: DirectionalLight {
                 illuminance: 10000.0,
                 // Configure the projection to better fit the scene
@@ -24,26 +39,35 @@ pub fn setup_light(mut commands: Commands) {
                 rotation: Quat::from_rotation_x(-std::f32::consts::FRAC_PI_4),
                 ..Default::default()
             },
+
             ..Default::default()
         })
-        .insert(Name::new("Light"));
+        .insert(Name::new("Sun"));
+    }
 }
 
+#[derive(Component)]
+pub struct Ground;
 
-pub fn setup_ground(
+fn create_ground(
     mut commands: Commands,
+    mut query: Query<Entity, Added<Ground>>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-
-    // ground
-    commands.spawn_bundle(PbrBundle {
-        mesh: meshes.add(Mesh::from(shape::Plane { size: 100.0 })),
-        transform: Transform::from_xyz(0.0, 0.0, 0.0),
-        material: materials.add(StandardMaterial {
-            base_color: Color::GREEN,
-            ..Default::default()
-        }),
-        ..Default::default()
-    });
+    for e in query.iter() {
+        info!("Creating ground");
+        commands
+            .entity(e)
+            .insert_bundle(PbrBundle {
+                mesh: meshes.add(Mesh::from(shape::Plane { size: 100.0 })),
+                material: materials.add(StandardMaterial {
+                    base_color: Color::GREEN,
+                    ..Default::default()
+                }),
+                transform: Transform::from_xyz(0.0, 0.0, 0.0),
+                ..Default::default()
+            })
+            .insert(Name::new("Ground"));
+    }
 }

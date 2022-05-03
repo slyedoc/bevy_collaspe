@@ -1,7 +1,6 @@
 use bevy::{gltf::Gltf, prelude::*};
 use bevy_asset_loader::{AssetCollection, AssetLoader};
 use bevy_editor_pls::default_windows::inspector;
-use bevy_inspector_egui::Inspectable;
 use bevy_text_mesh::{SizeUnit, TextMeshFont, TextMeshStyle};
 use rand::Rng;
 
@@ -12,14 +11,15 @@ pub struct AssetPlugin {
 }
 
 impl Plugin for AssetPlugin {
-    fn build(&self, app: &mut App) {
+    fn build(&self, mut app: &mut App) {
         AssetLoader::new(GameState::AssetLoading)
             .continue_to_state(self.init_state)
             .with_collection::<UiFont>()
             .with_collection::<AsciiAssets>()
             .with_collection::<NatureKitAssets>()
             .with_collection::<AudioAssets>()
-            .build(app);
+            .with_collection::<OverlayAssets>()
+            .build(&mut app);
 
         app.init_resource::<Text3dAssets>()
             .init_resource::<UiColors>();
@@ -32,12 +32,19 @@ pub struct NatureKitAssets {
     folder: Vec<Handle<Gltf>>,
 }
 
+
+#[derive(AssetCollection)]
+pub struct OverlayAssets {
+    #[asset(path = "images/music.png")]
+    pub music: Handle<Image>,
+}
+
+
 #[derive(AssetCollection)]
 pub struct UiFont {
     #[asset(path = "fonts/FiraSans-Bold.ttf")]
     pub base: Handle<Font>,
 }
-
 
 impl NatureKitAssets {
     pub fn rand_tree(&self) -> Handle<Gltf> {
@@ -51,6 +58,7 @@ pub struct UiColors {
     pub normal_button: Color,
     pub hovered_button: Color,
     pub pressed_button: Color,
+    pub ui_background: Color,
 }
 
 impl Default for UiColors {
@@ -59,6 +67,7 @@ impl Default for UiColors {
             normal_button: Color::rgb(0.15, 0.15, 0.15),
             hovered_button: Color::rgb(0.25, 0.25, 0.25),
             pressed_button: Color::rgb(0.35, 0.75, 0.35),
+            ui_background: Color::rgba(0.0, 0.0, 1.0, 0.05),
         }
     }
 }
@@ -75,7 +84,6 @@ struct AudioAssets {
 //walking: Handle<AudioSource>
 }
 
-// impl FromWorld for UiAssets {
 //     fn from_world(world: &mut World) -> Self {
 //         let (font, font2) = world.resource_scope(|_world: &mut World, asset_server: Mut<AssetServer>| {
 //                 (

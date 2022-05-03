@@ -366,7 +366,9 @@ dependencies = [
  "bevy_asset_loader",
  "bevy_editor_pls",
  "bevy_hanabi",
+ "bevy_mod_picking",
  "bevy_text_mesh",
+ "bevy_tweening",
  "itertools",
  "rand",
 ]
@@ -506,7 +508,7 @@ dependencies = [
  "bevy-inspector-egui",
  "bevy_editor_pls_core",
  "bevy_mod_debugdump",
- "bevy_mod_raycast",
+ "bevy_mod_raycast 0.4.0 (git+https://github.com/obsgolem/bevy_mod_raycast?branch=release)",
  "indexmap",
  "opener",
  "pretty-type-name",
@@ -691,6 +693,25 @@ dependencies = [
  "bevy_ecs",
  "bevy_render",
  "pretty-type-name",
+]
+
+[[package]]
+name = "bevy_mod_picking"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7d1be4bfb7c50e8c0dd471af3cdc0b1cbe18417cbc225b28d6724cf68e7db704"
+dependencies = [
+ "bevy",
+ "bevy_mod_raycast 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "bevy_mod_raycast"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f197fdb27012bc41a5a0086a784aca78b35aea2a10e38a0ea0f1e5b673ca4cfc"
+dependencies = [
+ "bevy",
 ]
 
 [[package]]
@@ -895,6 +916,16 @@ dependencies = [
  "bevy_hierarchy",
  "bevy_math",
  "bevy_reflect",
+]
+
+[[package]]
+name = "bevy_tweening"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "01cb9827ea7aa38cb5ac847eadc7f2d5cbce158ada7b4f58d586caf059313769"
+dependencies = [
+ "bevy",
+ "interpolation",
 ]
 
 [[package]]
@@ -2020,6 +2051,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "interpolation"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d3b7357d2bbc5ee92f8e899ab645233e43d21407573cceb37fed8bc3dede2c02"
+
+[[package]]
 name = "io-kit-sys"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2185,9 +2222,9 @@ dependencies = [
 
 [[package]]
 name = "log"
-version = "0.4.16"
+version = "0.4.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6389c490849ff5bc16be905ae24bc913a9c8892e19b2341dbc175e14c341c2b8"
+checksum = "abb12e687cfb44aa40f41fc3978ef76448f9b6038cad6aef4259d3c095a2382e"
 dependencies = [
  "cfg-if 1.0.0",
 ]
@@ -2555,9 +2592,9 @@ dependencies = [
 
 [[package]]
 name = "num-traits"
-version = "0.2.14"
+version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9a64b1ec5cda2586e284722486d802acf1f7dbdc623e2bfc57e65ca1cd099290"
+checksum = "578ede34cf02f8924ab9447f50c28075b4d3e5b269972345e7e0372b38c6cdcd"
 dependencies = [
  "autocfg",
 ]
@@ -3435,9 +3472,9 @@ checksum = "3ed742d4ea2bd1176e236172c8429aaf54486e7ac098db29ffe6529e0ce50973"
 
 [[package]]
 name = "unicode-xid"
-version = "0.2.2"
+version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8ccb82d61f80a663efe1f787a51b16b5a51e3314d6ac365b08639f52387b33f3"
+checksum = "957e51f3646910546462e67d5f7599b9e4fb8acdd304b087a6494730f9eebf04"
 
 [[package]]
 name = "url"

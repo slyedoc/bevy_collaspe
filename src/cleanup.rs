@@ -8,6 +8,10 @@ pub struct StartMenu;
 #[derive(Component)]
 pub struct Overworld;
 
+#[derive(Component)]
+pub struct Sudoku;
+
+
 pub struct CleanupPlugin;
 
 impl Plugin for CleanupPlugin {

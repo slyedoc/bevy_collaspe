@@ -77,7 +77,7 @@ pub fn create_fadeout(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    for e in fadeout_event.iter() {        
+    for e in fadeout_event.iter() {
 
         commands
             .spawn_bundle(SpriteBundle {
