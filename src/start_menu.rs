@@ -1,9 +1,14 @@
 use crate::{
-    assets::{UiColors, UiFont},
+    assets::{UiColors, UiFont, UiSize},
     enviroment::*,
     CameraController,
 };
-use bevy::{app::AppExit, math::vec3, prelude::*, ui::FocusPolicy};
+use bevy::{
+    app::AppExit,
+    math::{vec2, vec3},
+    prelude::*,
+    ui::FocusPolicy,
+};
 
 use crate::{ascii::AsciiSheet, cleanup, fadeout::FadeoutEvent, GameState};
 
@@ -11,7 +16,7 @@ pub struct StartMenuPlugin;
 
 #[derive(Debug, Component, Clone, Copy)]
 enum Button {
-    Start,
+    Overworld,
     Sudoku,
     Exit,
 }
@@ -43,7 +48,7 @@ fn button_events(
     for (interaction, btn, children) in interaction_query.iter_mut() {
         if Interaction::Clicked == *interaction {
             match btn {
-                Button::Start => fadeout.send(FadeoutEvent(Some(GameState::Overworld))),
+                Button::Overworld => fadeout.send(FadeoutEvent(Some(GameState::Overworld))),
                 Button::Sudoku => fadeout.send(FadeoutEvent(Some(GameState::Sudoku))),
                 Button::Exit => {
                     exit.send(AppExit);
@@ -53,106 +58,134 @@ fn button_events(
     }
 }
 
+// A unit struct to help identify the color-changing Text component
+#[derive(Component)]
+struct ColorText;
+
 fn setup_menu_ui(
     mut commands: Commands,
     mut materials: ResMut<Assets<StandardMaterial>>,
     mut meshes: ResMut<Assets<Mesh>>,
     ui_font: Res<UiFont>,
+    ui_size: Res<UiSize>,
 ) {
-    // Add UI
+    let bg_color = Color::rgba(0.15, 0.15, 0.15, 0.05).into();
+
+    // Title Bar
     commands
         .spawn_bundle(NodeBundle {
             style: Style {
-                size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
-                justify_content: JustifyContent::SpaceBetween,
+                position_type: PositionType::Absolute,
+                size: Size::new(Val::Percent(100.0), Val::Percent(20.0)),
+                position: Rect {
+                    top: Val::Percent(10.0),
+                    ..Default::default()
+                },
+                flex_direction: FlexDirection::ColumnReverse,
+                justify_content: JustifyContent::Center,
                 ..Default::default()
             },
-            color: Color::NONE.into(),
+            color: bg_color,
             ..Default::default()
         })
+        .insert(Name::new("Title Bar"))
         .insert(cleanup::StartMenu)
-        .insert(Name::new("Ui"))
         .with_children(|parent| {
             parent
-                .spawn_bundle(NodeBundle {
+                .spawn_bundle(TextBundle {
                     style: Style {
-                        size: Size::new(Val::Percent(30.0), Val::Percent(100.0)),
-                        border: Rect::all(Val::Px(2.0)),
+                        align_self: AlignSelf::Center,
                         ..Default::default()
                     },
-                    color: Color::rgb(0.65, 0.65, 0.65).into(),
+                    text: Text::with_section(
+                        "Sly Games",
+                        TextStyle {
+                            font: ui_font.base.clone(),
+                            //ui_font.base.clone(),
+                            font_size: 90.0,
+                            color: Color::GOLD,
+                        },
+                        Default::default(),
+                    ),
                     ..Default::default()
                 })
-                .insert(Name::new("Menu"))
-                .with_children(|parent| {
-                    parent
-                        .spawn_bundle(NodeBundle {
-                            style: Style {
-                                flex_direction: FlexDirection::ColumnReverse,
-                                size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
-                                align_items: AlignItems::FlexStart,
-                                ..Default::default()
-                            },
-                            color: Color::rgb(0.15, 0.15, 0.15).into(),
-                            ..Default::default()
-                        })
-                        .insert(Name::new("Left fill content"))
-                        .with_children(|parent| {
-                            // Title
-                            parent
-                                .spawn_bundle(TextBundle {
-                                    style: Style {
-                                        margin: Rect::all(Val::Px(5.0)),
-                                        ..Default::default()
-                                    },
-                                    text: Text::with_section(
-                                        "Testing - TwinGames",
-                                        TextStyle {
-                                            font: ui_font.base.clone(),
-                                            font_size: 30.0,
-                                            color: Color::WHITE,
-                                        },
-                                        Default::default(),
-                                    ),
-                                    ..Default::default()
-                                })
-                                .insert(Name::new("Title"));
+                .insert(Name::new("Title"));
 
-                            // start button
-                            create_menu_button(Button::Start, "Start", parent, &ui_font);
-                            create_menu_button(Button::Sudoku, "Sudoku", parent, &ui_font);
-                            create_menu_button(Button::Exit, "Exit", parent, &ui_font);
-                        });
-                });
-
-            // right vertical fill
+            // dev tag
             parent
                 .spawn_bundle(NodeBundle {
                     style: Style {
-                        flex_direction: FlexDirection::ColumnReverse,
-                        justify_content: JustifyContent::Center,
-                        size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
+                        align_self: AlignSelf::Center,
                         ..Default::default()
                     },
-                    color: Color::NONE.into(),
+                    color: Color::RED.into(),
                     ..Default::default()
                 })
-                .with_children(|parent| {});
+                .insert(Name::new("Dev Tag"))
+                .with_children(|parent| {
+                    parent
+                        .spawn_bundle(TextBundle {
+                            style: Style {
+                                align_self: AlignSelf::Center,
+                                margin: Rect::all(Val::Px(5.0)),
+                                ..Default::default()
+                            },
+                            text: Text::with_section(
+                                "from TwinGames",
+                                TextStyle {
+                                    font: ui_font.base.clone(),
+                                    //ui_font.base.clone(),
+                                    font_size: ui_size.label,
+                                    color: Color::GOLD,
+                                },
+                                Default::default(),
+                            ),
+                            ..Default::default()
+                        })
+                        .insert(Name::new("Dev"));
+                });
         });
 
-    // Exit
+    // Menu
+    commands
+        .spawn_bundle(NodeBundle {
+            style: Style {
+                position_type: PositionType::Absolute,
+                position: Rect {
+                    top: Val::Percent(40.0),
+                    left: Val::Percent(30.0),
+                    ..Default::default()
+                },
+                size: Size::new(Val::Percent(40.0), Val::Percent(40.0)),
+                flex_direction: FlexDirection::ColumnReverse,
+                align_content: AlignContent::Stretch,
+                justify_content: JustifyContent::Center,
+                ..Default::default()
+            },
+            color: bg_color,
+            ..Default::default()
+        })
+        .insert(Name::new("Menu"))
+        .insert(cleanup::StartMenu)
+        .with_children(|parent| {
+            create_menu_button(Button::Overworld, "Overworld", parent, &ui_font);
+            create_menu_button(Button::Sudoku, "Sudoku", parent, &ui_font);
+            create_menu_button(Button::Exit, "Exit", parent, &ui_font);
+        });
 }
-
 
 fn setup_menu_world(
     mut commands: Commands,
     mut materials: ResMut<Assets<StandardMaterial>>,
     mut meshes: ResMut<Assets<Mesh>>,
+    mut clear_color: ResMut<ClearColor>,
 ) {
+    clear_color.0 = Color::rgb(0.21, 0.36, 0.43) * 2.0;
+
     commands
         .spawn_bundle(PerspectiveCameraBundle {
             transform: Transform::from_xyz(0.0, 3.0, 10.0).looking_at(Vec3::ZERO, Vec3::Y),
-            ..Default::default()
+            ..default()
         })
         .insert(CameraController::default())
         .insert(Name::new("Camera3d"))
@@ -185,11 +218,10 @@ fn create_menu_button(
     parent
         .spawn_bundle(ButtonBundle {
             style: Style {
-                size: Size::new(Val::Percent(100.0), Val::Percent(10.0)),
-                margin: Rect::all(Val::Auto),
-                justify_content: JustifyContent::Center,
-                align_self: AlignSelf::Center,
+                margin: Rect::all(Val::Px(10.0)),
                 align_items: AlignItems::Center,
+                align_content: AlignContent::Center,
+                justify_content: JustifyContent::Center,
                 ..Default::default()
             },
             ..Default::default()

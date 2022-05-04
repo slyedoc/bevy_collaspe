@@ -1,7 +1,7 @@
 use std::f32::consts::PI;
 
 use bevy::{math::vec2, prelude::*, render::camera::Camera2d};
-use bevy_mod_picking::PickingCameraBundle;
+use bevy_mod_picking::{PickingCameraBundle, PickableBundle, PickingEvent};
 
 use crate::{camera_controller::CameraController, cleanup, GameState};
 
@@ -11,8 +11,15 @@ impl Plugin for SudokuPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<SudokuState>()
             .init_resource::<SudokuAssets>()
-            .add_system_set(SystemSet::on_enter(GameState::Sudoku).with_system(setup_sudoku));
+            .add_system_set(SystemSet::on_enter(GameState::Sudoku).with_system(setup_sudoku))
+            .add_system_set(SystemSet::on_update(GameState::Sudoku).with_system(print_events));
     }
+}
+
+#[derive(Component)]
+struct Position {
+    x: u8,
+    y: u8,
 }
 
 #[derive(Clone, Copy)]
@@ -192,9 +199,32 @@ fn create_board(
                     },
                     ..Default::default()
                 })
+                .insert(Position {
+                    x: i as u8,
+                    y: j as u8,
+                })
+                .insert_bundle(PickableBundle::default())
                 .insert(Name::new(format!("Cell ({},{})", i, j)));
             });
         }
     }
     board
+}
+
+fn print_events(
+    mut events: EventReader<PickingEvent>,
+    mut query: Query<(&Position)>,
+) {
+    for event in events.iter() {
+        match event {
+            //PickingEvent::Selection(e) => //info!("A selection event happened: {:?}", e),
+            //PickingEvent::Hover(e) => //info!("Egads! A hover event!? {:?}", e),
+            PickingEvent::Clicked(e) => {
+                if let Ok(pos) = query.get_component::<Position>(*e) {
+                    info!("A click event happened: {:?},{:?}", pos.x, pos.y);
+                }
+            },
+            _ => (),
+        }
+    }
 }

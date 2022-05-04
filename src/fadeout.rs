@@ -4,6 +4,7 @@ use crate::{ascii::AsciiSheet, GameState};
 
 pub struct FadeoutPlugin;
 
+#[derive(Debug, Component, Clone, Copy)]
 pub struct FadeoutEvent(pub Option<GameState>);
 
 #[derive(Component)]
@@ -47,7 +48,6 @@ fn fadeout(
     time: Res<Time>,
 ) {
     for (entity, mut fade, mut sprite) in fade_query.iter_mut() {
-        info!("fadeout");
         fade.timer.tick(time.delta());
         if fade.timer.percent() < 0.5 {
             fade.alpha = fade.timer.percent() * 2.0;
@@ -76,28 +76,37 @@ pub fn create_fadeout(
     mut fadeout_event: EventReader<FadeoutEvent>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
+    mut state: ResMut<State<GameState>>,
 ) {
     for e in fadeout_event.iter() {
+        info!("Fadeout event: {:?}", e);
 
-        commands
-            .spawn_bundle(SpriteBundle {
-                sprite: Sprite {
-                    custom_size: Some(Vec2::splat(100000.0)),
-                    color: Color::rgb(0.9, 0.9, 0.9),
-                    ..Default::default()
-                },
-                transform: Transform {
-                    translation: Vec3::new(0.0, 0.0, 999.0),
-                    ..Default::default()
-                },
-                ..Default::default()
-            })
-            .insert(ScreenFade {
-                alpha: 0.0,
-                sent: false,
-                next_state: e.0,
-                timer: Timer::from_seconds(1.0, false),
-            })
-            .insert(Name::new("Fadeout"));
+        if let Some(next_state) = e.0 {
+            state.push(next_state).unwrap();
+        } else {
+            state.pop().unwrap();
+        }
+
+        
+        // commands
+        //      .spawn_bundle(SpriteBundle {
+        //          sprite: Sprite {
+        //             custom_size: Some(Vec2::splat(2.0)),
+        //             color: Color::rgb(0.9, 0.9, 0.9),
+        //             ..Default::default()
+        //         },
+        //         transform: Transform {
+        //             translation: Vec3::new(0.0, 0.0, 0.0),
+        //             ..Default::default()
+        //         },
+        //         ..Default::default()
+        //     })
+        //     .insert(ScreenFade {
+        //         alpha: 0.0,
+        //         sent: false,
+        //         next_state: e.0,
+        //         timer: Timer::from_seconds(3.0, false),
+        //     })
+        //     .insert(Name::new("Fadeout"));
     }
 }

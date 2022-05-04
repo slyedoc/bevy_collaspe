@@ -21,6 +21,9 @@ impl Plugin for CleanupPlugin {
         )
         .add_system_set(
             SystemSet::on_exit(GameState::Overworld).with_system(cleanup_system::<Overworld>),
+        )
+        .add_system_set(
+            SystemSet::on_exit(GameState::Sudoku).with_system(cleanup_system::<Sudoku>),
         );
     }
 }

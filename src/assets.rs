@@ -1,7 +1,6 @@
 use bevy::{gltf::Gltf, prelude::*};
 use bevy_asset_loader::{AssetCollection, AssetLoader};
 use bevy_editor_pls::default_windows::inspector;
-use bevy_text_mesh::{SizeUnit, TextMeshFont, TextMeshStyle};
 use rand::Rng;
 
 use crate::GameState;
@@ -9,6 +8,8 @@ use crate::GameState;
 pub struct AssetPlugin {
     pub init_state: GameState,
 }
+
+pub struct StartupState(pub GameState);
 
 impl Plugin for AssetPlugin {
     fn build(&self, mut app: &mut App) {
@@ -21,7 +22,8 @@ impl Plugin for AssetPlugin {
             .with_collection::<OverlayAssets>()
             .build(&mut app);
 
-        app.init_resource::<Text3dAssets>()
+        app.insert_resource(StartupState(self.init_state))
+            .init_resource::<UiSize>()
             .init_resource::<UiColors>();
     }
 }
@@ -32,19 +34,29 @@ pub struct NatureKitAssets {
     folder: Vec<Handle<Gltf>>,
 }
 
-
 #[derive(AssetCollection)]
 pub struct OverlayAssets {
     #[asset(path = "images/music.png")]
     pub music: Handle<Image>,
 }
 
-
 #[derive(AssetCollection)]
 pub struct UiFont {
     #[asset(path = "fonts/FiraSans-Bold.ttf")]
     pub base: Handle<Font>,
 }
+pub struct UiSize {
+    pub label: f32,
+}
+impl Default for UiSize {
+    fn default() -> Self {
+        UiSize {
+            label: 30.0,
+        }
+    }
+}
+
+
 
 impl NatureKitAssets {
     pub fn rand_tree(&self) -> Handle<Gltf> {
@@ -109,28 +121,28 @@ struct AudioAssets {
 //     }
 // }
 
-pub struct Text3dAssets {
-    pub font_3d: Handle<TextMeshFont>,
-    pub font_3d_style: TextMeshStyle,
-}
+// pub struct Text3dAssets {
+//     pub font_3d: Handle<TextMeshFont>,
+//     pub font_3d_style: TextMeshStyle,
+// }
 
-impl FromWorld for Text3dAssets {
-    fn from_world(world: &mut World) -> Self {
-        let (font_3d) =
-            world.resource_scope(|_world: &mut World, asset_server: Mut<AssetServer>| {
-                (asset_server.load("fonts/FiraMono-Medium.ttf"))
-            });
+// impl FromWorld for Text3dAssets {
+//     fn from_world(world: &mut World) -> Self {
+//         let (font_3d) =
+//             world.resource_scope(|_world: &mut World, asset_server: Mut<AssetServer>| {
+//                 (asset_server.load("fonts/FiraMono-Medium.ttf"))
+//             });
 
-        let font_3d_style = TextMeshStyle {
-            font: font_3d.clone(),
-            font_size: SizeUnit::NonStandard(9.),
-            color: Color::rgb(0.0, 0.0, 0.0),
-            ..Default::default()
-        };
+//         let font_3d_style = TextMeshStyle {
+//             font: font_3d.clone(),
+//             font_size: SizeUnit::NonStandard(9.),
+//             color: Color::rgb(0.0, 0.0, 0.0),
+//             ..Default::default()
+//         };
 
-        Text3dAssets {
-            font_3d,
-            font_3d_style,
-        }
-    }
-}
+//         Text3dAssets {
+//             font_3d,
+//             font_3d_style,
+//         }
+//     }
+// }

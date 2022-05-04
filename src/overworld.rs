@@ -11,7 +11,10 @@ pub struct OverworldPlugin;
 
 impl Plugin for OverworldPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(GameState::Overworld).with_system(setup_overworld));
+        app
+            .add_system_set(
+                SystemSet::on_enter(GameState::Overworld)
+                .with_system(setup_overworld));
     }
 }
 
