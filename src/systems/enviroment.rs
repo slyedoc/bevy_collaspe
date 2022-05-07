@@ -18,31 +18,33 @@ fn create_sun(mut commands: Commands, mut query: Query<Entity, Added<Sun>>) {
     const HALF_SIZE: f32 = 50.0;
 
     for e in query.iter() {
-        commands.entity(e).insert_bundle(DirectionalLightBundle {
-            directional_light: DirectionalLight {
-                illuminance: 10000.0,
-                // Configure the projection to better fit the scene
-                shadow_projection: OrthographicProjection {
-                    left: -HALF_SIZE,
-                    right: HALF_SIZE,
-                    bottom: -HALF_SIZE,
-                    top: HALF_SIZE,
-                    near: -10.0 * HALF_SIZE,
-                    far: 100.0 * HALF_SIZE,
+        commands
+            .entity(e)
+            .insert_bundle(DirectionalLightBundle {
+                // directional_light: DirectionalLight {
+                //     illuminance: 10000.0,
+                //     // Configure the projection to better fit the scene
+                //     shadow_projection: OrthographicProjection {
+                //         left: -HALF_SIZE,
+                //         right: HALF_SIZE,
+                //         bottom: -HALF_SIZE,
+                //         top: HALF_SIZE,
+                //         near: -10.0 * HALF_SIZE,
+                //         far: 100.0 * HALF_SIZE,
+                //         ..Default::default()
+                //     },
+                //     shadows_enabled: true,
+                //     ..Default::default()
+                // },
+                transform: Transform {
+                    translation: Vec3::new(10.0, 10.0, 10.0),
+                    rotation: Quat::from_rotation_x(-std::f32::consts::FRAC_PI_4),
                     ..Default::default()
                 },
-                shadows_enabled: true,
-                ..Default::default()
-            },
-            transform: Transform {
-                translation: Vec3::new(10.0, 2.0, 10.0),
-                rotation: Quat::from_rotation_x(-std::f32::consts::FRAC_PI_4),
-                ..Default::default()
-            },
 
-            ..Default::default()
-        })
-        .insert(Name::new("Sun"));
+                ..Default::default()
+            })
+            .insert(Name::new("Sun"));
     }
 }
 
@@ -56,7 +58,6 @@ fn create_ground(
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     for e in query.iter() {
-        info!("Creating ground");
         commands
             .entity(e)
             .insert_bundle(PbrBundle {

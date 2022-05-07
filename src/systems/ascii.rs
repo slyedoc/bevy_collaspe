@@ -1,6 +1,7 @@
+// NOT USED: but plan too for mocking
 use bevy::prelude::*;
 
-use crate::{TILE_SIZE, assets::{AsciiAssets}, GameState};
+use crate::{assets::{AsciiAssets}, GameState};
 
 pub struct AsciiPlugin;
 
@@ -9,6 +10,7 @@ pub struct AsciiSheet(pub Handle<TextureAtlas>);
 #[derive(Component)]
 pub struct AsciiText;
 
+const TILE_SIZE: f32 = 50.0;
 #[derive(Copy, Clone)]
 pub struct NineSliceIndices {
     center: usize,

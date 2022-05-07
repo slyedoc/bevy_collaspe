@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{ascii::AsciiSheet, GameState};
-
+use crate::{systems::ascii::AsciiSheet, GameState};
 pub struct FadeoutPlugin;
 
 #[derive(Debug, Component, Clone, Copy)]
@@ -79,15 +78,15 @@ pub fn create_fadeout(
     mut state: ResMut<State<GameState>>,
 ) {
     for e in fadeout_event.iter() {
-        info!("Fadeout event: {:?}", e);
 
+        // TODO: need to extend this to handle 3d and 2d camera
+        // for now just change states
         if let Some(next_state) = e.0 {
             state.push(next_state).unwrap();
         } else {
             state.pop().unwrap();
         }
 
-        
         // commands
         //      .spawn_bundle(SpriteBundle {
         //          sprite: Sprite {

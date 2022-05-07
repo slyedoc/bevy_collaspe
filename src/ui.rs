@@ -1,6 +1,9 @@
+
+use std::fmt::Debug;
+
 use bevy::prelude::*;
 
-use crate::assets::UiColors;
+use crate::assets::{UiColors, UiFont};
 
 pub struct UiPlugin;
 
@@ -43,4 +46,41 @@ fn button_system(
             }
         }
     }
+}
+
+
+pub fn create_button(
+    btn: impl Component + Clone + Debug,
+    text: impl Into<String>,
+    parent: &mut ChildBuilder,
+    ui_font: &UiFont,
+) {
+    parent
+        .spawn_bundle(ButtonBundle {
+            style: Style {
+                margin: Rect::all(Val::Px(10.0)),
+                align_items: AlignItems::Center,
+                align_content: AlignContent::Center,
+                justify_content: JustifyContent::Center,
+                ..Default::default()
+            },
+            ..Default::default()
+        })
+        //.insert(ButtonActive(true))
+        .with_children(|parent| {
+            parent.spawn_bundle(TextBundle {
+                text: Text::with_section(
+                    text,
+                    TextStyle {
+                        font: ui_font.base.clone(),
+                        font_size: 40.0,
+                        color: Color::rgb(0.9, 0.9, 0.9),
+                    },
+                    Default::default(),
+                ),
+                ..Default::default()
+            });
+        })
+        .insert(btn.clone())
+        .insert(Name::new(format!("{:?} Button", btn.clone())));
 }

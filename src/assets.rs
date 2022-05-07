@@ -38,6 +38,8 @@ pub struct NatureKitAssets {
 pub struct OverlayAssets {
     #[asset(path = "images/music.png")]
     pub music: Handle<Image>,
+
+    
 }
 
 #[derive(AssetCollection)]
@@ -48,6 +50,9 @@ pub struct UiFont {
 pub struct UiSize {
     pub label: f32,
 }
+
+
+
 impl Default for UiSize {
     fn default() -> Self {
         UiSize {
@@ -79,7 +84,7 @@ impl Default for UiColors {
             normal_button: Color::rgb(0.15, 0.15, 0.15),
             hovered_button: Color::rgb(0.25, 0.25, 0.25),
             pressed_button: Color::rgb(0.35, 0.75, 0.35),
-            ui_background: Color::rgba(0.0, 0.0, 1.0, 0.05),
+            ui_background: Color::rgba(0.1, 0.1, 0.1, 0.05),
         }
     }
 }

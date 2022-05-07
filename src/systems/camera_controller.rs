@@ -159,7 +159,7 @@ fn update_camera_controller(
                 controller.yaw - mouse_delta.x * controller.sensitivity * dt,
             );
 
-            // Apply smoothing
+            // Apply smoothing, code needs improvement
             let target = Quat::from_euler(EulerRot::ZYX, 0.0, yaw, pitch);
             transform.rotation = transform.rotation.lerp(target, 0.5);
 

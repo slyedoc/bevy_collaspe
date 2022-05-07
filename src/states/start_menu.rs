@@ -1,7 +1,5 @@
 use crate::{
-    assets::{UiColors, UiFont, UiSize},
-    enviroment::*,
-    CameraController,
+    assets::{UiColors, UiFont, UiSize}, GameState, systems::{FadeoutEvent, CameraController, Sun, Ground, cleanup_system},
 };
 use bevy::{
     app::AppExit,
@@ -10,14 +8,17 @@ use bevy::{
     ui::FocusPolicy,
 };
 
-use crate::{ascii::AsciiSheet, cleanup, fadeout::FadeoutEvent, GameState};
 
 pub struct StartMenuPlugin;
+
+#[derive(Component)]
+struct StartMenu;
 
 #[derive(Debug, Component, Clone, Copy)]
 enum Button {
     Overworld,
     Sudoku,
+    Breakout,
     Exit,
 }
 
@@ -32,6 +33,9 @@ impl Plugin for StartMenuPlugin {
             SystemSet::on_resume(GameState::StartMenu)
                 .with_system(setup_menu_world)
                 .with_system(setup_menu_ui),
+        )
+        .add_system_set(
+            SystemSet::on_pause(GameState::StartMenu).with_system(cleanup_system::<StartMenu>),
         )
         .add_system(button_events);
     }
@@ -49,10 +53,13 @@ fn button_events(
         if Interaction::Clicked == *interaction {
             match btn {
                 Button::Overworld => fadeout.send(FadeoutEvent(Some(GameState::Overworld))),
+                Button::Breakout => fadeout.send(FadeoutEvent(Some(GameState::Breakout))),
                 Button::Sudoku => fadeout.send(FadeoutEvent(Some(GameState::Sudoku))),
+                
                 Button::Exit => {
                     exit.send(AppExit);
                 }
+                
             }
         }
     }
@@ -68,8 +75,9 @@ fn setup_menu_ui(
     mut meshes: ResMut<Assets<Mesh>>,
     ui_font: Res<UiFont>,
     ui_size: Res<UiSize>,
+    ui_colors: Res<UiColors>,
 ) {
-    let bg_color = Color::rgba(0.15, 0.15, 0.15, 0.05).into();
+    
 
     // Title Bar
     commands
@@ -85,11 +93,11 @@ fn setup_menu_ui(
                 justify_content: JustifyContent::Center,
                 ..Default::default()
             },
-            color: bg_color,
+            color: ui_colors.ui_background.into(),
             ..Default::default()
         })
         .insert(Name::new("Title Bar"))
-        .insert(cleanup::StartMenu)
+        .insert(StartMenu)
         .with_children(|parent| {
             parent
                 .spawn_bundle(TextBundle {
@@ -162,13 +170,14 @@ fn setup_menu_ui(
                 justify_content: JustifyContent::Center,
                 ..Default::default()
             },
-            color: bg_color,
+            color: ui_colors.ui_background.into(),
             ..Default::default()
         })
         .insert(Name::new("Menu"))
-        .insert(cleanup::StartMenu)
+        .insert(StartMenu)
         .with_children(|parent| {
             create_menu_button(Button::Overworld, "Overworld", parent, &ui_font);
+            create_menu_button(Button::Breakout, "Breakout", parent, &ui_font);
             create_menu_button(Button::Sudoku, "Sudoku", parent, &ui_font);
             create_menu_button(Button::Exit, "Exit", parent, &ui_font);
         });
@@ -189,13 +198,13 @@ fn setup_menu_world(
         })
         .insert(CameraController::default())
         .insert(Name::new("Camera3d"))
-        .insert(cleanup::StartMenu);
+        .insert(StartMenu);
 
     // light
-    commands.spawn().insert(Sun).insert(cleanup::StartMenu);
+    commands.spawn().insert(Sun).insert(StartMenu);
 
     // Ground
-    commands.spawn().insert(Ground).insert(cleanup::StartMenu);
+    commands.spawn().insert(Ground).insert(StartMenu);
 
     // setup box
     commands
@@ -206,7 +215,7 @@ fn setup_menu_world(
             ..default()
         })
         .insert(Name::new("Cube"))
-        .insert(cleanup::StartMenu);
+        .insert(StartMenu);
 }
 
 fn create_menu_button(

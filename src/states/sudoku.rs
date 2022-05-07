@@ -3,16 +3,20 @@ use std::f32::consts::PI;
 use bevy::{math::vec2, prelude::*, render::camera::Camera2d};
 use bevy_mod_picking::{PickingCameraBundle, PickableBundle, PickingEvent};
 
-use crate::{camera_controller::CameraController, cleanup, GameState};
+use crate::{GameState, assets::{UiColors, UiFont}, ui::{self, create_button}, systems::{cleanup_system, CameraController}};
 
 pub struct SudokuPlugin;
+
+#[derive(Component)]
+struct Sudoku;
 
 impl Plugin for SudokuPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<SudokuState>()
             .init_resource::<SudokuAssets>()
             .add_system_set(SystemSet::on_enter(GameState::Sudoku).with_system(setup_sudoku))
-            .add_system_set(SystemSet::on_update(GameState::Sudoku).with_system(print_events));
+            .add_system_set(SystemSet::on_update(GameState::Sudoku).with_system(print_events))
+            .add_system_set(SystemSet::on_exit(GameState::Sudoku).with_system(cleanup_system::<Sudoku>));
     }
 }
 
@@ -99,7 +103,7 @@ fn setup_sudoku(
         .insert(CameraController::default())
         .insert(Name::new("Camera3d"))
         .insert_bundle(PickingCameraBundle::default())
-        .insert(cleanup::Sudoku);
+        .insert(Sudoku);
 
     clear_color.0 = Color::WHITE;
 
@@ -116,7 +120,7 @@ fn create_board(
 ) -> Entity {
     let board = commands
         .spawn_bundle(TransformBundle::default())
-        .insert(cleanup::Sudoku)
+        .insert(Sudoku)
         .insert(Name::new("Board"))
         .id();
 
@@ -210,6 +214,50 @@ fn create_board(
     }
     board
 }
+
+#[derive(Component, Debug, Clone)]
+enum Button {
+    Show,
+    New,
+    Solve,
+    Clear,
+}
+
+fn create_ui(
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    ui_colors: Res<UiColors>,
+    ui_font: Res<UiFont>,
+) {
+        // Menu
+        commands
+        .spawn_bundle(NodeBundle {
+            style: Style {
+                position_type: PositionType::Absolute,
+                position: Rect {
+                    bottom: Val::Percent(10.0),
+                    left: Val::Percent(30.0),
+                    ..Default::default()
+                },
+                size: Size::new(Val::Percent(40.0), Val::Percent(40.0)),
+                flex_direction: FlexDirection::ColumnReverse,
+                align_content: AlignContent::Stretch,
+                justify_content: JustifyContent::Center,
+                ..Default::default()
+            },
+            color: ui_colors.ui_background.into(),
+            ..Default::default()
+        })
+        .insert(Name::new("Menu"))
+        .insert(Sudoku)
+        .with_children(|parent| {
+            create_button(Button::Show, "Show", parent, &ui_font);
+        });
+
+}
+
+
+
 
 fn print_events(
     mut events: EventReader<PickingEvent>,
