@@ -338,7 +338,7 @@ fn spawn_ball(
             ),
             ..default()
         })
-        .insert(RigidBody::Static)
+        .insert(RigidBody)
         .insert(LinearVelocity(
             vec3(
                 rnd.gen_range(config.ball_init_x_range.0..config.ball_init_x_range.1), 

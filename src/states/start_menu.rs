@@ -8,9 +8,7 @@ use bevy::{
     ui::FocusPolicy,
 };
 
-
 pub struct StartMenuPlugin;
-
 #[derive(Component)]
 struct StartMenu;
 

@@ -52,41 +52,41 @@ fn setup_overworld(
     // Ground
     commands.spawn().insert(Ground).insert(Overworld);
 
-    // Create a single animation (tween) to move an entity.
-    let tween = Tween::new(
-        // Use a quadratic easing on both endpoints.
-        EaseFunction::QuadraticInOut,
-        // Loop animation back and forth.
-        TweeningType::PingPong,
-        // Animation time (one way only; for ping-pong it takes 2 seconds
-        // to come back to start).
-        Duration::from_secs(1),
-        // The lens gives the Animator access to the Transform component,
-        // to animate it. It also contains the start and end values associated
-        // with the animation ratios 0. and 1.
-        TransformPositionLens {
-            start: Vec3::new(0., 0., 0.),
-            end: Vec3::new(1., 2., -4.),
-        },
-    );
+    // // Create a single animation (tween) to move an entity.
+    // let tween = Tween::new(
+    //     // Use a quadratic easing on both endpoints.
+    //     EaseFunction::QuadraticInOut,
+    //     // Loop animation back and forth.
+    //     TweeningType::PingPong,
+    //     // Animation time (one way only; for ping-pong it takes 2 seconds
+    //     // to come back to start).
+    //     Duration::from_secs(1),
+    //     // The lens gives the Animator access to the Transform component,
+    //     // to animate it. It also contains the start and end values associated
+    //     // with the animation ratios 0. and 1.
+    //     TransformPositionLens {
+    //         start: Vec3::new(0., 0., 0.),
+    //         end: Vec3::new(1., 2., -4.),
+    //     },
+    // );
 
-    // sphere
-    commands
-        .spawn_bundle(PbrBundle {
-            transform: Transform::from_xyz(0.0, 2.0, 0.0),
-            mesh: meshes.add(Mesh::from(shape::UVSphere {
-                radius: 0.5,
-                ..Default::default()
-            })),
-            material: materials.add(StandardMaterial {
-                base_color: Color::rgb(0.3, 0.3, 0.3),
-                ..Default::default()
-            }),
-            ..Default::default()
-        })
-        .insert(Animator::new(tween))
-        .insert(Name::new("Sphere"))
-        .insert(Overworld);
+    // // sphere
+    // commands
+    //     .spawn_bundle(PbrBundle {
+    //         transform: Transform::from_xyz(0.0, 2.0, 0.0),
+    //         mesh: meshes.add(Mesh::from(shape::UVSphere {
+    //             radius: 0.5,
+    //             ..Default::default()
+    //         })),
+    //         material: materials.add(StandardMaterial {
+    //             base_color: Color::rgb(0.3, 0.3, 0.3),
+    //             ..Default::default()
+    //         }),
+    //         ..Default::default()
+    //     })
+    //     .insert(Animator::new(tween))
+    //     .insert(Name::new("Sphere"))
+    //     .insert(Overworld);
 }
 
 fn setup_sandbox(
@@ -112,7 +112,8 @@ fn setup_sandbox(
             ),
             ..default()
         })
-        .insert(RigidBody::Static)
+        .insert(RigidBody)
+        //.insert(Static)
         .insert(LinearVelocity(vec3(
             0.0,
             0.0,

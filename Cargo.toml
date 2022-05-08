@@ -13,9 +13,9 @@ edition = "2021"
 
 [dependencies]
 bevy = { version = "0.7.0", features = ["dynamic"] } #{ git = "https://github.com/bevyengine/bevy", branch = "main" }
-bevy_editor_pls = { git = "https://github.com/jakobhellermann/bevy_editor_pls", branch = "main" }
+#bevy_editor_pls = { git = "https://github.com/jakobhellermann/bevy_editor_pls", branch = "main" }
 bevy_mod_picking = "0.6"
-bevy-inspector-egui = "0.10.0"
+bevy-inspector-egui = "0.11.0"
 bevy_asset_loader = "0.10.0"
 bevy_hanabi = { version = "0.2" }
 bevy_tweening = "0.4"

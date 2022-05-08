@@ -1,6 +1,5 @@
 use bevy::{gltf::Gltf, prelude::*};
 use bevy_asset_loader::{AssetCollection, AssetLoader};
-use bevy_editor_pls::default_windows::inspector;
 use rand::Rng;
 
 use crate::GameState;

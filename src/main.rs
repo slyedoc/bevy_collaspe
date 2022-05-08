@@ -30,7 +30,7 @@ use ui::*;
 use wave::*;
 
 use bevy::{app::AppExit, diagnostic::FrameTimeDiagnosticsPlugin, prelude::*, ui::UiPlugin};
-use bevy_editor_pls::prelude::*;
+//use bevy_editor_pls::prelude::*;
 use rand::Rng;
 
 const TIME_STEP: f32 = 1.0 / 60.0;
