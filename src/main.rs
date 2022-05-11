@@ -1,29 +1,27 @@
 #![allow(warnings)]
 
-
+mod assets;
 mod states;
 mod systems;
-mod assets;
 
 mod math;
 
+pub mod physics;
 mod tiles;
 mod ui;
 mod wave;
-pub mod physics;
 
-use states::*;
-use systems::*;
 use assets::*;
 use bevy_asset_loader::AssetLoader;
 use bevy_hanabi::HanabiPlugin;
 use bevy_inspector_egui::WorldInspectorPlugin;
 use bevy_mod_picking::DefaultPickingPlugins;
+use states::*;
+use systems::*;
 
 use bevy_tweening::TweeningPlugin;
 
 use physics::*;
-
 
 use tiles::Tiles;
 use ui::*;
@@ -39,6 +37,7 @@ const TIME_STEP: f32 = 1.0 / 60.0;
 pub enum GameState {
     AssetLoading,
     StartMenu,
+    Tetris,
     Sudoku,
     Breakout,
     Overworld,
@@ -50,7 +49,7 @@ fn main() {
         .add_plugin(FrameTimeDiagnosticsPlugin::default())
         .add_state(GameState::AssetLoading)
         .add_plugin(AssetPlugin {
-            init_state: GameState::Overworld,
+            init_state: GameState::StartMenu,
         })
         .insert_resource(ClearColor(Color::rgb(0.3, 0.3, 0.3)))
         // 3rd Party
@@ -73,12 +72,12 @@ fn main() {
         .add_plugin(UiPlugin)
         // Levels
         .add_plugin(SudokuPlugin)
+        .add_plugin(TetrisPlugin)
         .add_plugin(OverworldPlugin)
         .add_plugin(BreakoutPlugin)
         //.add_plugin(WavePlugin)
         //.add_plugins(bevy_mod_picking::DefaultPickingPlugins)
         //.add_plugin(bevy_transform_gizmo::TransformGizmoPlugin)
-
         // Global Setup
         .add_startup_system(setup)
         .add_system(update_escape)

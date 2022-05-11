@@ -1,5 +1,7 @@
 use crate::{
-    assets::{UiColors, UiFont, UiSize}, GameState, systems::{FadeoutEvent, CameraController, Sun, Ground, cleanup_system},
+    assets::{UiColors, UiFont, UiSize},
+    systems::{cleanup_system, CameraController, FadeoutEvent, Ground, Sun},
+    GameState,
 };
 use bevy::{
     app::AppExit,
@@ -16,6 +18,7 @@ struct StartMenu;
 enum Button {
     Overworld,
     Sudoku,
+    Tetris,
     Breakout,
     Exit,
 }
@@ -53,11 +56,10 @@ fn button_events(
                 Button::Overworld => fadeout.send(FadeoutEvent(Some(GameState::Overworld))),
                 Button::Breakout => fadeout.send(FadeoutEvent(Some(GameState::Breakout))),
                 Button::Sudoku => fadeout.send(FadeoutEvent(Some(GameState::Sudoku))),
-                
+                Button::Tetris => fadeout.send(FadeoutEvent(Some(GameState::Tetris))),
                 Button::Exit => {
                     exit.send(AppExit);
                 }
-                
             }
         }
     }
@@ -75,8 +77,6 @@ fn setup_menu_ui(
     ui_size: Res<UiSize>,
     ui_colors: Res<UiColors>,
 ) {
-    
-
     // Title Bar
     commands
         .spawn_bundle(NodeBundle {
@@ -177,6 +177,7 @@ fn setup_menu_ui(
             create_menu_button(Button::Overworld, "Overworld", parent, &ui_font);
             create_menu_button(Button::Breakout, "Breakout", parent, &ui_font);
             create_menu_button(Button::Sudoku, "Sudoku", parent, &ui_font);
+            create_menu_button(Button::Tetris, "Tetris", parent, &ui_font);
             create_menu_button(Button::Exit, "Exit", parent, &ui_font);
         });
 }
